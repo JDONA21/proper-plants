@@ -1,46 +1,52 @@
 import { useState } from "react";
+
+import PLANTS from "./data";
+
+import Cart from "./Cart";
 import Plants from "./Plants";
-import Cart from "./cart";
 
 export default function App() {
-  const [items, setItems] = useState([]);
+  const [cart, setCart] = useState([]);
 
   const addToCart = (plant) => {
-    const existingItem = items.find((item) => item.id === plant.id);
-    if (existingItem) {
-      setItems(
-        items.map((item) =>
+    const itemExists = cart.find((i) => i.id === plant.id);
+    if (itemExists) {
+      setCart(
+        cart.map((item) =>
           item.id === plant.id
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         ),
       );
     } else {
-      setItems([...items, { ...plant, quantity: 1 }]);
+      const item = { ...plant, quantity: 1 };
+      setCart([...cart, item]);
     }
   };
 
   const removeFromCart = (itemToRemove) => {
-    setItems(
-      items
+    setCart(
+      cart
         .map((item) =>
-          item.id === itemToRemove
+          item.id === itemToRemove.id
             ? { ...item, quantity: item.quantity - 1 }
             : item,
         )
-
         .filter((item) => item.quantity > 0),
     );
   };
+
   return (
     <>
       <h1>Proper Plants</h1>
-      <Plants addToCart={addToCart} />
-      <Cart
-        items={items}
-        addToCart={addToCart}
-        removeFromCart={removeFromCart}
-      />
+      <main>
+        <Plants plants={PLANTS} addToCart={addToCart} />
+        <Cart
+          cart={cart}
+          removeFromCart={removeFromCart}
+          addToCart={addToCart}
+        />
+      </main>
     </>
   );
 }
